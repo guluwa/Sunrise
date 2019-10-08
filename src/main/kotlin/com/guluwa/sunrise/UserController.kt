@@ -1,20 +1,17 @@
 package com.guluwa.sunrise
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
 import java.util.concurrent.ConcurrentHashMap
-import org.springframework.web.bind.annotation.ModelAttribute
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PathVariable
 import sun.text.normalizer.UCharacter.getAge
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Sort
+import org.springframework.web.bind.annotation.*
+
 
 @RestController
 class UserController {
 
     // 创建线程安全的Map，用作数据存储
-    var users: ConcurrentHashMap<Long, UserModel> = ConcurrentHashMap()
+    var users: ConcurrentHashMap<String, UserModel> = ConcurrentHashMap()
 
     /**
      * 查询用户列表
@@ -43,7 +40,7 @@ class UserController {
      * @return
      */
     @GetMapping("/{id}")
-    fun getUser(@PathVariable id: Long?): UserModel? {
+    fun getUser(@PathVariable id: String?): UserModel? {
         return users[id]
     }
 
@@ -54,9 +51,9 @@ class UserController {
      * @return
      */
     @PutMapping("/{id}")
-    fun putUser(@PathVariable id: Long?, @ModelAttribute userModel: UserModel): UserModel? {
-        users[id]?.username = userModel.username
-        users[id]?.password = userModel.password
+    fun putUser(@PathVariable id: String?, @ModelAttribute userModel: UserModel): UserModel? {
+        users[id]?.nickName = userModel.nickName
+        users[id]?.age = userModel.age
         return users[userModel.id]
     }
 
@@ -66,8 +63,29 @@ class UserController {
      * @return
      */
     @DeleteMapping("/{id}")
-    fun deleteUser(@PathVariable id: Long?): String {
+    fun deleteUser(@PathVariable id: String?): String {
         users.remove(id)
+        return "success"
+    }
+
+    //=============================================================================================================
+
+    @Autowired
+    lateinit var userRepository: UserRepository
+
+    @GetMapping("/user")
+    fun user(): List<UserModel> {
+        return userRepository.findAll(Sort.by("id").descending()).toList()
+    }
+
+    @PostMapping("/user")
+    fun user(@RequestBody user: UserModel): UserModel {
+        return userRepository.save(user)
+    }
+
+    @DeleteMapping("/user")
+    fun deleteUserById(id: String): String {
+        userRepository.deleteById(id)
         return "success"
     }
 }

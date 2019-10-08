@@ -16,9 +16,9 @@ class HelloController {
         val map = HashMap<String, Any>()
 
         val userModel = UserModel()
-        userModel.id = 1L
-        userModel.username = "Spring Boot"
-        userModel.password = "123456"
+        userModel.id = "1"
+        userModel.nickName = "Spring Boot"
+        userModel.age = 123456
 
         map["user"] = userModel
 
