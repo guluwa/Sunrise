@@ -1,5 +1,7 @@
-package com.guluwa.sunrise
+package com.guluwa.sunrise.controller
 
+import com.guluwa.sunrise.model.CourseModel
+import com.guluwa.sunrise.model.UserModel
 import org.springframework.stereotype.Controller
 import java.util.ArrayList
 import java.util.HashMap

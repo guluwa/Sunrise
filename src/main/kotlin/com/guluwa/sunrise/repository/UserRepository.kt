@@ -1,5 +1,6 @@
-package com.guluwa.sunrise
+package com.guluwa.sunrise.repository
 
+import com.guluwa.sunrise.model.UserModel
 import org.springframework.data.jpa.repository.JpaRepository
 
 

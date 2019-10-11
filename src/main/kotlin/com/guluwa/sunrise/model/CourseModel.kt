@@ -1,4 +1,4 @@
-package com.guluwa.sunrise
+package com.guluwa.sunrise.model
 
 data class CourseModel(var name: String = "",
                        var address: String = "") {

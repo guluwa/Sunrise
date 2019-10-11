@@ -1,12 +1,21 @@
-package com.guluwa.sunrise
+package com.guluwa.sunrise.controller
 
+import com.guluwa.sunrise.SunriseApplication
+import com.guluwa.sunrise.model.User
+import com.guluwa.sunrise.model.UserModel
+import com.guluwa.sunrise.repository.UserRepository
+import lombok.extern.slf4j.Slf4j
+import org.apache.commons.logging.LogFactory
 import java.util.concurrent.ConcurrentHashMap
-import sun.text.normalizer.UCharacter.getAge
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
+import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.web.bind.annotation.*
+import java.io.Serializable
+import javax.annotation.Resource
 
-
+@Slf4j
 @RestController
 class UserController {
 
@@ -79,13 +88,42 @@ class UserController {
     }
 
     @PostMapping("/user")
-    fun user(@RequestBody user: UserModel): UserModel {
-        return userRepository.save(user)
+    fun user(@RequestParam(required = false, defaultValue = "") id: String,
+             @RequestParam name: String,
+             @RequestParam(required = false, defaultValue = "0") age: Int): Any {
+        val model = UserModel(name, age)
+        if (id != "") {
+            model.id = id
+        }
+        return userRepository.save(model)
     }
 
     @DeleteMapping("/user")
-    fun deleteUserById(id: String): String {
+    fun deleteUserById(@RequestParam id: String): String {
         userRepository.deleteById(id)
         return "success"
+    }
+
+    //=============================================================================================================
+
+    val log = LogFactory.getLog(SunriseApplication::class.java)!!
+
+    @Resource
+    lateinit var mStringRedisTemplate: StringRedisTemplate
+
+    @Resource
+    lateinit var mRedisTemplate: RedisTemplate<String, Serializable>
+
+    @GetMapping("/test")
+    fun test() {
+        mStringRedisTemplate.opsForValue().set("baidu", "www.baidu.com")
+
+        log.info("当前获取对象：" + mStringRedisTemplate.opsForValue().get("baidu"))
+
+        mRedisTemplate.opsForValue().set("guluwa", User(1, "guluwa", 18))
+
+        val user = mRedisTemplate.opsForValue().get("guluwa") as User
+
+        log.info("当前获取对象：$user")
     }
 }
