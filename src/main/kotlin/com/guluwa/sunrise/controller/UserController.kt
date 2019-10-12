@@ -1,9 +1,16 @@
 package com.guluwa.sunrise.controller
 
+import com.alibaba.druid.util.StringUtils
 import com.guluwa.sunrise.SunriseApplication
+import com.guluwa.sunrise.Utils
+import com.guluwa.sunrise.dto.UserDTO
+import com.guluwa.sunrise.dto.UserResultDTO
+import com.guluwa.sunrise.model.LessonModel
+import com.guluwa.sunrise.model.PeopleModel
 import com.guluwa.sunrise.model.User
 import com.guluwa.sunrise.model.UserModel
 import com.guluwa.sunrise.repository.UserRepository
+import com.guluwa.sunrise.service.LessonService
 import lombok.extern.slf4j.Slf4j
 import org.apache.commons.logging.LogFactory
 import java.util.concurrent.ConcurrentHashMap
@@ -14,6 +21,16 @@ import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.web.bind.annotation.*
 import java.io.Serializable
 import javax.annotation.Resource
+import org.springframework.web.bind.annotation.GetMapping
+import com.guluwa.sunrise.service.UserService
+import org.thymeleaf.util.DateUtils
+import java.util.*
+import javax.servlet.http.HttpServletRequest
+import javax.transaction.Transactional
+import java.util.stream.Collectors
+import com.querydsl.core.types.ExpressionUtils.orderBy
+import org.springframework.web.bind.annotation.RequestMapping
+
 
 @Slf4j
 @RestController
@@ -108,11 +125,15 @@ class UserController {
 
     val log = LogFactory.getLog(SunriseApplication::class.java)!!
 
-    @Resource
+    @Autowired
     lateinit var mStringRedisTemplate: StringRedisTemplate
 
-    @Resource
+    @Autowired
     lateinit var mRedisTemplate: RedisTemplate<String, Serializable>
+
+    @Autowired
+    lateinit var userService: UserService
+
 
     @GetMapping("/test")
     fun test() {
@@ -125,5 +146,77 @@ class UserController {
         val user = mRedisTemplate.opsForValue().get("guluwa") as User
 
         log.info("当前获取对象：$user")
+    }
+
+    @GetMapping("/test1")
+    fun test1() {
+        var user = userService.save(User(4L, "guluwa4", 35))
+
+        log.info("当前 save 对象：$user")
+
+        user = userService[1L]!!
+
+        log.info("当前 get 对象：$user")
+
+        userService.delete(5L)
+    }
+
+    @GetMapping("/getBlogUrl")
+    fun getSessionId(request: HttpServletRequest): String {
+        val url = request.session.getAttribute("url") as String?
+        if (StringUtils.isEmpty(url)) {
+            request.session.setAttribute("url", "https://www.geekdigging.com/")
+        }
+        log.info("获取session内容为：" + request.session.getAttribute("url"))
+        return request.requestedSessionId
+    }
+
+    //=============================================================================================================
+
+    @Transactional
+    @PostMapping("/peopleUpdate")
+    fun peopleUpdate(@RequestParam id: String, @RequestParam nickName: String): Long {
+        return userService.update(id, nickName) ?: -1
+    }
+
+    @Transactional
+    @PostMapping("/peopleDelete")
+    fun peopleDelete(@RequestParam id: String): Long {
+        return userService.delete(id) ?: -1
+    }
+
+    @GetMapping("/allNameList")
+    fun allNameList(): List<String> {
+        return userService.selectDistinctNameList()
+    }
+
+    @GetMapping("/allUserModelList")
+    fun allUserModelList(): List<PeopleModel> {
+        return userService.selectAllUserModelList()
+    }
+
+    @GetMapping("/allUserDTOList")
+    fun allUserDTOList(): List<UserResultDTO> {
+        return userService.selectAllUserDTOList()
+    }
+
+    @GetMapping("/distinctNameList")
+    fun distinctNameList(): List<String> {
+        return userService.selectDistinctNameList()
+    }
+
+    @GetMapping("/firstUser")
+    fun firstUser(): PeopleModel {
+        return userService.selectFirstUser()
+    }
+
+    @GetMapping("/selectUser")
+    fun selectUser(@RequestParam id: String): PeopleModel? {
+        return userService.selectUser(id)
+    }
+
+    @PostMapping("/mysqlFuncDemo")
+    fun selectUser(@RequestParam id: String, @RequestParam nickName: String, @RequestParam age: Int): String? {
+        return userService.mysqlFuncDemo(id, nickName, age)
     }
 }
