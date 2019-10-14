@@ -79,3 +79,13 @@ spring:
       max-lifetime: 1800000
       pool-name: DatebookHikariCP
       maximum-pool-size: 5
+
+mybatis:
+  type-aliases-package: com.guluwa.sunrise.model
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml
+
+# 配置slq打印日志
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

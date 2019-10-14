@@ -30,7 +30,7 @@ class SunriseApplicationTests {
     @Test
     fun contextLoads() {
 
-        var request: RequestBuilder? = null
+        var request: RequestBuilder?
 
         // 1、get查一下user列表，应该为空
         request = MockMvcRequestBuilders.get("/")

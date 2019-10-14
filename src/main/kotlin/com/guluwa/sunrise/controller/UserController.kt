@@ -2,15 +2,11 @@ package com.guluwa.sunrise.controller
 
 import com.alibaba.druid.util.StringUtils
 import com.guluwa.sunrise.SunriseApplication
-import com.guluwa.sunrise.Utils
-import com.guluwa.sunrise.dto.UserDTO
 import com.guluwa.sunrise.dto.UserResultDTO
-import com.guluwa.sunrise.model.LessonModel
-import com.guluwa.sunrise.model.PeopleModel
+import com.guluwa.sunrise.model.People
 import com.guluwa.sunrise.model.User
 import com.guluwa.sunrise.model.UserModel
 import com.guluwa.sunrise.repository.UserRepository
-import com.guluwa.sunrise.service.LessonService
 import lombok.extern.slf4j.Slf4j
 import org.apache.commons.logging.LogFactory
 import java.util.concurrent.ConcurrentHashMap
@@ -20,16 +16,10 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.web.bind.annotation.*
 import java.io.Serializable
-import javax.annotation.Resource
 import org.springframework.web.bind.annotation.GetMapping
 import com.guluwa.sunrise.service.UserService
-import org.thymeleaf.util.DateUtils
-import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.transaction.Transactional
-import java.util.stream.Collectors
-import com.querydsl.core.types.ExpressionUtils.orderBy
-import org.springframework.web.bind.annotation.RequestMapping
 
 
 @Slf4j
@@ -191,7 +181,7 @@ class UserController {
     }
 
     @GetMapping("/allUserModelList")
-    fun allUserModelList(): List<PeopleModel> {
+    fun allUserModelList(): List<People> {
         return userService.selectAllUserModelList()
     }
 
@@ -206,12 +196,12 @@ class UserController {
     }
 
     @GetMapping("/firstUser")
-    fun firstUser(): PeopleModel {
+    fun firstUser(): People {
         return userService.selectFirstUser()
     }
 
     @GetMapping("/selectUser")
-    fun selectUser(@RequestParam id: String): PeopleModel? {
+    fun selectUser(@RequestParam id: String): People? {
         return userService.selectUser(id)
     }
 

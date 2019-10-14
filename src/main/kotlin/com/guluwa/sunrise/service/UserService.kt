@@ -1,8 +1,7 @@
 package com.guluwa.sunrise.service
 
-import com.guluwa.sunrise.dto.UserDTO
 import com.guluwa.sunrise.dto.UserResultDTO
-import com.guluwa.sunrise.model.PeopleModel
+import com.guluwa.sunrise.model.People
 import com.guluwa.sunrise.model.User
 
 interface UserService {
@@ -21,15 +20,15 @@ interface UserService {
 
     fun selectAllNameList(): List<String>
 
-    fun selectAllUserModelList(): List<PeopleModel>
+    fun selectAllUserModelList(): List<People>
 
     fun selectAllUserDTOList(): List<UserResultDTO>
 
     fun selectDistinctNameList(): List<String>
 
-    fun selectFirstUser(): PeopleModel
+    fun selectFirstUser(): People
 
-    fun selectUser(id: String): PeopleModel?
+    fun selectUser(id: String): People?
 
     fun mysqlFuncDemo(id: String, nickName: String, age: Int): String?
 }

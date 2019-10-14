@@ -2,7 +2,6 @@ package com.guluwa.sunrise.service.impl
 
 import com.guluwa.sunrise.SunriseApplication
 import com.guluwa.sunrise.Utils
-import com.guluwa.sunrise.dto.LessonDTO
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.CachePut
 import java.util.HashMap
@@ -11,19 +10,14 @@ import lombok.extern.slf4j.Slf4j
 import org.apache.commons.logging.LogFactory
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
-import com.oracle.util.Checksums.update
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.beans.factory.annotation.Autowired
-import com.querydsl.jpa.JPAExpressions.selectFrom
-import org.apache.tomcat.jni.Buffer.address
 import com.guluwa.sunrise.dto.UserDTO
 import com.guluwa.sunrise.dto.UserResultDTO
 import com.guluwa.sunrise.model.*
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.Expressions
-import com.querydsl.core.types.dsl.StringTemplate
 import java.util.stream.Collectors
-
 
 @Service
 @Slf4j
@@ -84,7 +78,7 @@ class UserServiceImpl : UserService {
         return queryFactory.select(userModel.nickName).from(userModel).fetch()
     }
 
-    override fun selectAllUserModelList(): List<PeopleModel> {
+    override fun selectAllUserModelList(): List<People> {
         val userModel = QPeopleModel.peopleModel
         // 查询实体
         return queryFactory.selectFrom(userModel).fetch()
@@ -121,13 +115,13 @@ class UserServiceImpl : UserService {
         return queryFactory.selectDistinct(userModel.nickName).from(userModel).fetch()
     }
 
-    override fun selectFirstUser(): PeopleModel {
+    override fun selectFirstUser(): People {
         val userModel = QPeopleModel.peopleModel
         // 查询首个实体
         return queryFactory.selectFrom(userModel).fetchFirst()
     }
 
-    override fun selectUser(id: String): PeopleModel? {
+    override fun selectUser(id: String): People? {
         val userModel = QPeopleModel.peopleModel
         // 查询单个实体，如果结果有多个，会抛`NonUniqueResultException`。
         return queryFactory.selectFrom(userModel).where(userModel.id.eq(id)).fetchOne()
